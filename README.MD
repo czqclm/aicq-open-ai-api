@@ -103,5 +103,70 @@ public class OpenAIConfiguration {
 }
 ```
 
+调用
+
+```java
+public class ChatController {
+    @PostMapping("/completions")
+    public AicqResponse<ChatCompletionResponse> getOneCall(@RequestBody @Validated ChatCompletionRequest request) {
+        // 这里随便拿一个
+        OpenAIServiceImpl aiService = OpenAIConfiguration.getRandomOpenAIService();
+        ChatCompletionResponse chatCompletionResponse = aiService.getChatCompletionsService().chatCompletions(request);
+        log.info("Chat completion response: " + chatCompletionResponse);
+        return AicqResponse.ok(chatCompletionResponse);
+    }
+}
+```
+
+stream 调用
+
+```java
+public class ChatController {
+    @PostMapping(value = "/completions/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> sse(@RequestBody @Validated ChatCompletionRequest request) {
+        request.setStream(true);
+        CopyOnWriteArrayList<String> lineList = new CopyOnWriteArrayList<>();
+        return Flux.create(emitter -> {
+            OpenAIServiceImpl aiService = OpenAIConfiguration.getRandomOpenAIService();
+
+            // return false 将为持续监听
+            // return true 关闭监听
+            aiService.getChatCompletionsService().chatCompletionsStream(request, (line, aicqHttpException) -> {
+                log.trace("""
+                        --------------------------------
+                        request = {}
+                        line = {}
+                        aicqHttpException = {}
+                        --------------------------------""", request, line, aicqHttpException);
+                try {
+                    // 异常
+                    if (Objects.nonNull(aicqHttpException)) {
+                        emitter.error(aicqHttpException);
+                    }
+                    if (line.contains(OpenAIConstant.CHAT_COMPLETIONS_FINISH_FIELD)) {
+                        lineList.add(line);
+                        if (line.contains(OpenAIConstant.CHAT_COMPLETIONS_UNFINISHED_MARK)) {
+                            // 正在响应中
+                            HandleOpenAIStreamResponseUtils.emitterLineToClient(line, emitter::next);
+                            return false;
+                        } else {
+                            // openAI 响应终止 详见 @see OpenAIFinishReasonEnum
+                            HandleOpenAIStreamResponseUtils.emitterLineToClient(line, emitter::next);
+                            emitter.complete();
+                            return true;
+                        }
+                    }
+                    return false;
+                } catch (Exception e) {
+                    emitter.error(e);
+                    emitter.complete();
+                    return true;
+                }
+            });
+        });
+    }
+}
+```
+
 
 
