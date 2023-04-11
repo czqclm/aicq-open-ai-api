@@ -4,7 +4,7 @@
 
 ## TODO
 
-- [ ] 支持计算 tokens
+- [X] 支持计算 tokens
 - [ ] 支持其他接口
 - [ ] 支持多 http client
 
@@ -147,11 +147,11 @@ public class ChatController {
                         lineList.add(line);
                         if (line.contains(OpenAIConstant.CHAT_COMPLETIONS_UNFINISHED_MARK)) {
                             // 正在响应中
-                            HandleOpenAIStreamResponseUtils.emitterLineToClient(line, emitter::next);
+                            HandleOpenAIStreamResponseUtils.streamLine2CleanContent(line, emitter::next);
                             return false;
                         } else {
                             // openAI 响应终止 详见 @see OpenAIFinishReasonEnum
-                            HandleOpenAIStreamResponseUtils.emitterLineToClient(line, emitter::next);
+                            HandleOpenAIStreamResponseUtils.streamLine2CleanContent(line, emitter::next);
                             emitter.complete();
                             return true;
                         }
