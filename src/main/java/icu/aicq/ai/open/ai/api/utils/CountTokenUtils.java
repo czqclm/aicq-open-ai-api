@@ -12,6 +12,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author zhiqi
@@ -55,7 +56,11 @@ public class CountTokenUtils {
                 }
             }
         }
-        return OpenAIUsageDTO.builder().promptTokens(promptTokens).completionTokens(completionTokens).totalTokens(promptTokens + completionTokens).build();
+
+        OpenAIUsageDTO usageDTO = OpenAIUsageDTO.builder().promptTokens(promptTokens).completionTokens(completionTokens).totalTokens(promptTokens + completionTokens).build();
+        // 写入响应
+        Optional.ofNullable(response).ifPresent(e -> e.setUsage(usageDTO));
+        return usageDTO;
     }
 
 }

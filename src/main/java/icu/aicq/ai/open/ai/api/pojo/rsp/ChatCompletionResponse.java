@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import icu.aicq.ai.open.ai.api.common.OpenAIFinishReasonEnum;
 import icu.aicq.ai.open.ai.api.common.OpenAIModelEnum;
 import icu.aicq.ai.open.ai.api.pojo.dto.MessageDTO;
+import icu.aicq.ai.open.ai.api.pojo.dto.OpenAIUsageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,7 +49,7 @@ public class ChatCompletionResponse {
     /**
      * 使用量
      */
-    private Usage usage;
+    private OpenAIUsageDTO usage;
 
     @Data
     @AllArgsConstructor
@@ -82,22 +83,5 @@ public class ChatCompletionResponse {
     @Builder
     public static class Delta {
         private String content;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class Usage {
-
-        @JsonProperty("prompt_tokens")
-        private Integer promptTokens;
-
-        @JsonProperty("completion_tokens")
-        private Integer completionTokens;
-
-
-        @JsonProperty("total_tokens")
-        private Integer totalTokens;
     }
 }
