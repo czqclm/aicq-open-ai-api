@@ -2,6 +2,7 @@ package icu.aicq.ai.open.ai.api.utils;
 
 import com.alibaba.fastjson2.JSON;
 import icu.aicq.ai.open.ai.api.exception.AicqHttpException;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -14,8 +15,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.BufferedSource;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -73,13 +72,13 @@ public class OkHttpClientUtils {
         Request request = builder.build();
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 streamResponse.apply(null, new AicqHttpException(null, null, "流被意外关闭", e));
                 call.cancel();
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try (ResponseBody responseBody = response.body()) {
                     successFullCheck(response, request, errorResponse -> {
                         AicqHttpException exception = new AicqHttpException(errorResponse.code(), errorResponse, "Unexpected code");
@@ -107,7 +106,7 @@ public class OkHttpClientUtils {
         });
     }
 
-    private static <E> void successFullCheck(@NotNull Response response, Request request, Function<Response, RuntimeException> exceptionSupplier) {
+    private static <E> void successFullCheck(@NonNull Response response, Request request, Function<Response, RuntimeException> exceptionSupplier) {
         log.debug("HTTP Request: {} {}{}", request.method(), request.url(), request.body() != null ? " " + request.body() : "");
         if (request.headers().size() > 0) {
             log.debug("Request Headers:");
@@ -121,7 +120,6 @@ public class OkHttpClientUtils {
         }
     }
 
-    @Nullable
     private <R> R handlerResponse(Request request, Class<R> clazz) {
         try (Response response = client.newCall(request).execute()) {
             successFullCheck(response, request, errorResponse -> new AicqHttpException(errorResponse.code(), errorResponse, "Unexpected code"));
@@ -146,7 +144,6 @@ public class OkHttpClientUtils {
         return post(url, requestBody, headerMap, clazz);
     }
 
-    @NotNull
     private static <D> RequestBody generateRequestBody(D body) {
         String requestJson;
         if (body instanceof String) {
