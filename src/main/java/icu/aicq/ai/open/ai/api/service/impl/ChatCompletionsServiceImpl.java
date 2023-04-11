@@ -79,6 +79,7 @@ public class ChatCompletionsServiceImpl extends OpenAIServiceImpl implements Cha
                         return true;
                     }
                     // 如果 openAI 没有主动终止响应, 持续进行监听
+                    // If OpenAI does not terminate the response actively, keep listening continuously.
                     if (line.contains(OpenAIConstant.CHAT_COMPLETIONS_FINISH_FIELD)) {
                         lineList.add(line);
                         if (line.contains(OpenAIConstant.CHAT_COMPLETIONS_UNFINISHED_MARK)) {

@@ -1,7 +1,6 @@
 package icu.aicq.ai.open.ai.api.exception;
 
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * @author zhiqi
