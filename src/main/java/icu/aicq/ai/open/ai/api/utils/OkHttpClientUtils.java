@@ -1,7 +1,11 @@
 package icu.aicq.ai.open.ai.api.utils;
 
 import com.alibaba.fastjson2.JSON;
-import icu.aicq.ai.open.ai.api.exception.AicqHttpException;
+import icu.aicq.ai.open.ai.api.exception.AicqException;
+import icu.aicq.ai.open.ai.api.exception.OpenAINoRouteToHostException;
+import icu.aicq.ai.open.ai.api.exception.OpenAIResourceException;
+import icu.aicq.ai.open.ai.api.exception.OpenAIStreamClosedUnexpectedlyException;
+import icu.aicq.ai.open.ai.api.exception.OpenAIStreamEmptyException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
@@ -50,7 +54,7 @@ public class OkHttpClientUtils {
     }
 
     public <R> R get(String url, Map<String, String> queryParams, Map<String, String> headerMap, Class<R> clazz) {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+        HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
         Optional.ofNullable(queryParams).ifPresent(params -> queryParams.forEach(urlBuilder::addQueryParameter));
         String finalUrl = urlBuilder.build().toString();
 
@@ -65,7 +69,7 @@ public class OkHttpClientUtils {
         return handlerResponse(builder.build(), clazz);
     }
 
-    public <D> void postStream(String url, D body, Map<String, String> headerMap, BiFunction<String, AicqHttpException, Boolean> streamResponse) {
+    public <D> void postStream(String url, D body, Map<String, String> headerMap, BiFunction<String, AicqException, Boolean> streamResponse) {
         RequestBody requestBody = generateRequestBody(body);
         Request.Builder builder = new Request.Builder().url(url).post(requestBody);
         Optional.ofNullable(headerMap).ifPresent(map -> map.forEach(builder::addHeader));
@@ -73,7 +77,7 @@ public class OkHttpClientUtils {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                streamResponse.apply(null, new AicqHttpException(null, null, "流被意外关闭", e));
+                streamResponse.apply(null, new OpenAIStreamClosedUnexpectedlyException(e));
                 call.cancel();
             }
 
@@ -81,14 +85,14 @@ public class OkHttpClientUtils {
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try (ResponseBody responseBody = response.body()) {
                     successFullCheck(response, request, errorResponse -> {
-                        AicqHttpException exception = new AicqHttpException(errorResponse.code(), errorResponse, "Unexpected code");
-                        streamResponse.apply(null, exception);
-                        return exception;
+                        OpenAIResourceException resourceException = new OpenAIResourceException(errorResponse.code(), errorResponse, "Unexpected code");
+                        streamResponse.apply(null, resourceException);
+                        return resourceException;
                     });
                     if (Objects.isNull(responseBody)) {
-                        streamResponse.apply(null, new AicqHttpException(null, null, "Response body is null."));
+                        streamResponse.apply(null, new OpenAIStreamEmptyException("Response body is null."));
                     }
-                    BufferedSource source = responseBody.source();
+                    BufferedSource source = Objects.requireNonNull(responseBody).source();
                     boolean endFlag = false;
                     while (!source.exhausted() && !endFlag) {
                         // 按行读取源中的数据
@@ -100,7 +104,7 @@ public class OkHttpClientUtils {
                     }
                     call.cancel();
                 } catch (IOException e) {
-                    streamResponse.apply(null, new AicqHttpException(null, null, "流被意外关闭", e));
+                    streamResponse.apply(null, new OpenAIStreamClosedUnexpectedlyException());
                 }
             }
         });
@@ -122,7 +126,7 @@ public class OkHttpClientUtils {
 
     private <R> R handlerResponse(Request request, Class<R> clazz) {
         try (Response response = client.newCall(request).execute()) {
-            successFullCheck(response, request, errorResponse -> new AicqHttpException(errorResponse.code(), errorResponse, "Unexpected code"));
+            successFullCheck(response, request, errorResponse -> new OpenAIResourceException(errorResponse.code(), errorResponse, "Unexpected code"));
             ResponseBody responseBody = response.body();
             if (Objects.nonNull(responseBody)) {
                 String jsonString = responseBody.string();
@@ -131,11 +135,9 @@ public class OkHttpClientUtils {
             }
             return null;
         } catch (NoRouteToHostException e) {
-            log.error("HTTP Request Failed: {}", e.getMessage());
-            throw new AicqHttpException(null, null, "HTTP Request Failed, 请设置请求代理!", e);
+            throw new OpenAINoRouteToHostException("HTTP Request Failed. Please set up the proxy!", e);
         } catch (IOException e) {
-            log.error("HTTP Request Failed: {}", e.getMessage());
-            throw new AicqHttpException(null, null, "HTTP Request Failed", e);
+            throw new OpenAIStreamEmptyException("HTTP Request Failed");
         }
     }
 
