@@ -90,21 +90,13 @@ public class ChatCompletionResponse {
     @Builder
     public static class Usage {
 
-        /**
-         * 请求 token 数
-         */
         @JsonProperty("prompt_tokens")
         private Integer promptTokens;
 
-        /**
-         * 响应 token 数
-         */
         @JsonProperty("completion_tokens")
         private Integer completionTokens;
 
-        /**
-         * 总 token 数
-         */
+
         @JsonProperty("total_tokens")
         private Integer totalTokens;
     }

@@ -18,11 +18,11 @@ import java.util.function.Consumer;
 public class HandleOpenAIStreamResponseUtils {
 
 
-    public static void emitterLineToClient(String line, Consumer<String> consumer) {
+    public static void streamLine2CleanContent(String line, Consumer<String> cleanContent) {
         if (StringUtils.isNotBlank(line)) {
             String content = onlyContent(line);
             if (StringUtils.isNotEmpty(content)) {
-                consumer.accept(content);
+                cleanContent.accept(content);
             }
         }
     }
