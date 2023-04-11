@@ -12,20 +12,20 @@ public class OpenAIServiceImpl implements OpenAIService {
 
     public OpenAIConfigStorage openAIConfigStorage;
 
+    public OpenAIServiceImpl(OpenAIConfigStorage openAIConfigStorage) {
+        this.openAIConfigStorage = openAIConfigStorage;
+    }
+
     @Override
     public OpenAIConfigStorage getOpenAIConfigStorage() {
         return openAIConfigStorage;
     }
 
     @Override
-    public void setOpenAIConfigStorage(OpenAIConfigStorage openAIConfigStorage) {
-        this.openAIConfigStorage = openAIConfigStorage;
-    }
-
-    @Override
     public String getOpenAIApiKey() {
         return openAIConfigStorage.getApiKey();
     }
+
     public ChatCompletionsServiceImpl getChatCompletionsService() {
         return new ChatCompletionsServiceImpl(this.openAIConfigStorage);
     }

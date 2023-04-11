@@ -18,7 +18,6 @@ import java.util.function.BiFunction;
  * @author zhiqi
  * @date 2023-03-19
  */
-@RequiredArgsConstructor
 @Slf4j
 public class ChatCompletionsServiceImpl extends OpenAIServiceImpl implements ChatCompletionsService {
     @Override
@@ -43,7 +42,7 @@ public class ChatCompletionsServiceImpl extends OpenAIServiceImpl implements Cha
     }
 
     public ChatCompletionsServiceImpl(OpenAIConfigStorage openAIConfigStorage) {
-        this.openAIConfigStorage = openAIConfigStorage;
+        super(openAIConfigStorage);
     }
 
 }

@@ -10,8 +10,6 @@ public interface OpenAIService {
 
     OpenAIConfigStorage getOpenAIConfigStorage();
 
-    void setOpenAIConfigStorage(OpenAIConfigStorage openAIConfigStorage);
-
     String getOpenAIApiKey();
 
 }
