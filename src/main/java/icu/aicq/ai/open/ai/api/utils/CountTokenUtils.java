@@ -4,14 +4,12 @@ import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;
 import com.knuddels.jtokkit.api.EncodingRegistry;
 import com.knuddels.jtokkit.api.ModelType;
-import icu.aicq.ai.open.ai.api.pojo.dto.MessageDTO;
 import icu.aicq.ai.open.ai.api.pojo.dto.OpenAIUsageDTO;
 import icu.aicq.ai.open.ai.api.pojo.req.ChatCompletionRequest;
 import icu.aicq.ai.open.ai.api.pojo.rsp.ChatCompletionResponse;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -35,30 +33,20 @@ public class CountTokenUtils {
      */
     public static OpenAIUsageDTO countTokensByRequestAndResponse(ChatCompletionRequest request, ChatCompletionResponse response) {
         Encoding secondEnc = registry.getEncodingForModel(ModelType.GPT_3_5_TURBO);
-        int promptTokens = 0;
-        int completionTokens = 0;
+        int promptTokens = Optional.ofNullable(request)
+                .map(ChatCompletionRequest::getMessages)
+                .orElse(Collections.emptyList())
+                .stream()
+                .mapToInt(message -> secondEnc.countTokensOrdinary(message.getContent()))
+                .sum();
 
-        // promptTokens
-        if (Objects.nonNull(request)) {
-            secondEnc = registry.getEncodingForModel(ModelType.fromName(request.getModel()).orElse(ModelType.GPT_3_5_TURBO));
-
-            if (CollectionUtils.isNotEmpty(request.getMessages())) {
-                for (MessageDTO message : request.getMessages()) {
-                    promptTokens += secondEnc.countTokensOrdinary(message.getContent());
-                }
-            }
-        }
-
-        // completionTokens
-        if (Objects.nonNull(response)) {
-            if (CollectionUtils.isNotEmpty(response.getChoices())) {
-                for (ChatCompletionResponse.Choice choice : response.getChoices()) {
-                    if (Objects.nonNull(choice.getMessage()) && StringUtils.isNotBlank(choice.getMessage().getContent())) {
-                        completionTokens += secondEnc.countTokensOrdinary(choice.getMessage().getContent());
-                    }
-                }
-            }
-        }
+        int completionTokens = Optional.ofNullable(response)
+                .map(ChatCompletionResponse::getChoices)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(choice -> Objects.nonNull(choice.getMessage()) && StringUtils.isNotBlank(choice.getMessage().getContent()))
+                .mapToInt(choice -> secondEnc.countTokensOrdinary(choice.getMessage().getContent()))
+                .sum();
 
         OpenAIUsageDTO usageDTO = OpenAIUsageDTO.builder().promptTokens(promptTokens).completionTokens(completionTokens).totalTokens(promptTokens + completionTokens).build();
         // 写入响应
