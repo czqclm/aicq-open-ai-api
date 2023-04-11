@@ -9,6 +9,7 @@ import icu.aicq.ai.open.ai.api.pojo.dto.OpenAIUsageDTO;
 import icu.aicq.ai.open.ai.api.pojo.req.ChatCompletionRequest;
 import icu.aicq.ai.open.ai.api.pojo.rsp.ChatCompletionResponse;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 import java.util.Objects;
@@ -50,9 +51,11 @@ public class CountTokenUtils {
 
         // completionTokens
         if (Objects.nonNull(response)) {
-            if (CollectionUtils.isNotEmpty(request.getMessages())) {
-                for (MessageDTO message : request.getMessages()) {
-                    completionTokens += secondEnc.countTokensOrdinary(message.getContent());
+            if (CollectionUtils.isNotEmpty(response.getChoices())) {
+                for (ChatCompletionResponse.Choice choice : response.getChoices()) {
+                    if (Objects.nonNull(choice.getMessage()) && StringUtils.isNotBlank(choice.getMessage().getContent())) {
+                        completionTokens += secondEnc.countTokensOrdinary(choice.getMessage().getContent());
+                    }
                 }
             }
         }
