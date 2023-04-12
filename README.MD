@@ -1,4 +1,5 @@
 [中文](README.MD) / [English](README.en-US.md)
+
 # aicq-open-ai-api
 
 > 在 java 中实现了 stream 调用 openAI 接口的能力,并且支持配置多个 apiKey
@@ -14,12 +15,25 @@
 引入依赖
 
 ```xml
+<dependencies>
+    <dependency>
+        <groupId>icu.aicq</groupId>
+        <artifactId>aicq-open-ai-api</artifactId>
+        <version>${aicq-open-ai-api.version}</version>
+    </dependency>
 
-<dependency>
-    <groupId>icu.aicq</groupId>
-    <artifactId>aicq-open-ai-api</artifactId>
-    <version>${aicq-open-ai-api.version}</version>
-</dependency>
+    <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>4.10.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-stdlib</artifactId>
+        <version>1.6.20</version>
+        <scope>compile</scope>
+    </dependency>
+</dependencies>
 ```
 
 增加配置, `aicq-open-ai-api` 不会从你配置中读取数据,此处仅作为演示配置

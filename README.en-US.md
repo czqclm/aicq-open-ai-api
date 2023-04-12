@@ -1,27 +1,45 @@
 [中文](README.MD) / [English](README.en-US.md)
+
 # aicq-open-ai-api
 
-> The ability to call the OpenAI API using stream has been implemented in Java, and multiple apiKey configurations are supported.
+> The ability to call the OpenAI API using stream has been implemented in Java, and multiple apiKey configurations are
+> supported.
 
 ## TODO
+
 - [x] Support for calculating tokens
 - [ ] Support for other APIs
 - [ ] Support for multiple HTTP clients.
 
 ## Demo
 
-Introducing Dependencies. 
+Introducing Dependencies.
 
 ```xml
 
-<dependency>
-    <groupId>icu.aicq</groupId>
-    <artifactId>aicq-open-ai-api</artifactId>
-    <version>${aicq-open-ai-api.version}</version>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>icu.aicq</groupId>
+        <artifactId>aicq-open-ai-api</artifactId>
+        <version>${aicq-open-ai-api.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>4.10.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-stdlib</artifactId>
+        <version>1.6.20</version>
+        <scope>compile</scope>
+    </dependency>
+</dependencies>
 ```
 
-Adding configuration, `aicq-open-ai-api` will not read data from your configuration and is only used for demonstration purposes.
+Adding configuration, `aicq-open-ai-api` will not read data from your configuration and is only used for demonstration
+purposes.
 
 ```yaml
 open-ai:
