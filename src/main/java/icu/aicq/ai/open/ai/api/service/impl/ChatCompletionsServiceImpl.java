@@ -53,7 +53,7 @@ public class ChatCompletionsServiceImpl extends OpenAIServiceImpl implements Cha
 
     @Override
     public Flux<String> handleStream2SSEResponse(ChatCompletionRequest request) {
-        return handleStream2SSEResponse(request, null);
+        return handleStream2SSEResponse(request, ((list, aicqException) -> {}));
     }
 
     @Override
