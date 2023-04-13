@@ -42,6 +42,10 @@ public class OkHttpClientUtils {
         this.client = new OkHttpClient();
     }
 
+    public OkHttpClientUtils(OkHttpClient client) {
+        this.client = client;
+    }
+
     public OkHttpClientUtils(Proxy.Type proxyType, String proxyHost, int proxyPort) {
         Proxy proxy = new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort));
         this.client = new OkHttpClient.Builder()
