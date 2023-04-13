@@ -69,6 +69,7 @@ public class OkHttpClientUtils {
         return handlerResponse(builder.build(), clazz);
     }
 
+    // todo 优化超时请求
     public <D> void postStream(String url, D body, Map<String, String> headerMap, BiFunction<String, AicqException, Boolean> streamResponse) {
         RequestBody requestBody = generateRequestBody(body);
         Request.Builder builder = new Request.Builder().url(url).post(requestBody);
