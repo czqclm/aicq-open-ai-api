@@ -15,6 +15,7 @@ import java.util.Optional;
 
 /**
  * @author zhiqi
+ * @version v1.0 结合 jtokkit 作者的回复, 修正计算结果 <a href="https://github.com/knuddelsgmbh/jtokkit/issues/5">Discrepancy in promptTokens count while using jtokkit with OpenAI's GPT-3 API</a>
  * @date 2023-04-10
  */
 public class CountTokenUtils {
@@ -33,11 +34,19 @@ public class CountTokenUtils {
      */
     public static OpenAIUsageDTO countTokensByRequestAndResponse(ChatCompletionRequest request, ChatCompletionResponse response) {
         Encoding secondEnc = registry.getEncodingForModel(ModelType.GPT_3_5_TURBO);
+        int tokensPerMessage = 4; // every message follows <|start|>{role/name}\n{content}<|end|>\n
         int promptTokens = Optional.ofNullable(request)
                 .map(ChatCompletionRequest::getMessages)
                 .orElse(Collections.emptyList())
                 .stream()
-                .mapToInt(message -> secondEnc.countTokensOrdinary(message.getContent()))
+                .mapToInt(message -> {
+                    int count = 0;
+                    count += tokensPerMessage;
+                    // content
+                    count += secondEnc.countTokensOrdinary(message.getContent());
+                    count += secondEnc.countTokensOrdinary(message.getRole());
+                    return count;
+                })
                 .sum();
 
         int completionTokens = Optional.ofNullable(response)
