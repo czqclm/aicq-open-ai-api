@@ -17,4 +17,6 @@ public interface OpenAIConstant {
     String CHAT_COMPLETIONS_UNFINISHED_MARK = "\"finish_reason\":null";
 
     String STREAM_DATA_STARTS_STR_PREFIX = "data: ";
+
+    String END_MARK = "[DONE]";
 }

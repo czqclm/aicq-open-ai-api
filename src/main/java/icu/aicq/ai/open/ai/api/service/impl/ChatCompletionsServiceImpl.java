@@ -50,14 +50,8 @@ public class ChatCompletionsServiceImpl extends OpenAIServiceImpl implements Cha
         super(openAIConfigStorage);
     }
 
-
     @Override
-    public Flux<String> handleStream2SSEResponse(ChatCompletionRequest request) {
-        return handleStream2SSEResponse(request, ((list, aicqException) -> {}));
-    }
-
-    @Override
-    public Flux<String> handleStream2SSEResponse(ChatCompletionRequest request, BiConsumer<CopyOnWriteArrayList<String>, AicqException> finalResult) {
+    public Flux<String> handleStream2SSEResponse(ChatCompletionRequest request, boolean pretreatmentDataToOnlyContent, BiConsumer<CopyOnWriteArrayList<String>, AicqException> finalResult) {
         // 设置 stream 传输
         request.setStream(true);
 
@@ -80,19 +74,22 @@ public class ChatCompletionsServiceImpl extends OpenAIServiceImpl implements Cha
                     }
                     // 如果 openAI 没有主动终止响应, 持续进行监听
                     // If OpenAI does not terminate the response actively, keep listening continuously.
-                    if (line.contains(OpenAIConstant.CHAT_COMPLETIONS_FINISH_FIELD)) {
-                        lineList.add(line);
-                        if (line.contains(OpenAIConstant.CHAT_COMPLETIONS_UNFINISHED_MARK)) {
-                            HandleOpenAIStreamResponseUtils.streamLine2CleanContent(line, emitter::next);
-                            return false;
-                        } else {
-                            finalResult.accept(lineList, null);
-                            HandleOpenAIStreamResponseUtils.streamLine2CleanContent(line, emitter::next);
-                            emitter.complete();
-                            return true;
+                    if (line.contains(OpenAIConstant.END_MARK)) {
+                        if (!pretreatmentDataToOnlyContent) {
+                            emitter.next(line);
                         }
+                        emitter.complete();
+                        finalResult.accept(lineList, null);
+                        return true;
+                    } else {
+                        lineList.add(line);
+                        if (pretreatmentDataToOnlyContent) {
+                            HandleOpenAIStreamResponseUtils.streamLine2CleanContent(line, emitter::next);
+                        } else {
+                            emitter.next(line);
+                        }
+                        return false;
                     }
-                    return false;
                 } catch (Exception e) {
                     emitter.error(e);
                     emitter.complete();

@@ -30,6 +30,8 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static icu.aicq.ai.open.ai.api.common.OpenAIConstant.STREAM_DATA_STARTS_STR_PREFIX;
+
 /**
  * @author zhiqi
  * @date 2023-03-19
@@ -104,6 +106,9 @@ public class OkHttpClientUtils {
                         String line = source.readUtf8Line();
                         log.debug("Response line : {}", line);
                         if (StringUtils.isNotBlank(line)) {
+                            if (line.startsWith(STREAM_DATA_STARTS_STR_PREFIX)) {
+                                line = line.substring(STREAM_DATA_STARTS_STR_PREFIX.length());
+                            }
                             endFlag = streamResponse.apply(line, null);
                         }
                     }
