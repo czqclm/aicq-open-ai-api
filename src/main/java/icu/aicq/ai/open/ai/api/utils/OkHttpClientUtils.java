@@ -1,6 +1,7 @@
 package icu.aicq.ai.open.ai.api.utils;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import icu.aicq.ai.open.ai.api.exception.AicqException;
 import icu.aicq.ai.open.ai.api.exception.OpenAINoRouteToHostException;
 import icu.aicq.ai.open.ai.api.exception.OpenAIResourceException;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.NoRouteToHostException;
 import java.net.Proxy;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -67,6 +69,22 @@ public class OkHttpClientUtils {
         Request.Builder builder = new Request.Builder().url(finalUrl);
         Optional.ofNullable(headerMap).ifPresent(map -> map.forEach(builder::addHeader));
         return handlerResponse(builder.build(), clazz);
+    }
+
+    public <R, D> R get(String url, D data, Class<R> clazz) {
+        return get(url, data, null, clazz);
+    }
+
+    public <R, D> R get(String url, D data, Map<String, String> headerMap, Class<R> clazz) {
+        if (Objects.isNull(data)) {
+            return get(url, null, headerMap, clazz);
+        }
+        Map<String, String> queryParams = new HashMap<>(8);
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(data);
+        for (String key : jsonObject.keySet()) {
+            queryParams.put(key, jsonObject.getString(key));
+        }
+        return get(url, queryParams, headerMap, clazz);
     }
 
     public <R> R post(String url, RequestBody body, Map<String, String> headerMap, Class<R> clazz) {
