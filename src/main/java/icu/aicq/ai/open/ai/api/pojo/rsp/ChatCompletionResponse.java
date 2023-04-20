@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author zhiqi
@@ -83,5 +84,12 @@ public class ChatCompletionResponse {
     @Builder
     public static class Delta {
         private String content;
+    }
+
+    public String getOnlyOneAnswer() {
+        if (Objects.nonNull(this.getChoices()) && !this.getChoices().isEmpty()) {
+            return this.getChoices().get(this.getChoices().size() - 1).getMessage().getContent();
+        }
+        return null;
     }
 }
