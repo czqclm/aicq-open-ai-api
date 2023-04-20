@@ -163,9 +163,11 @@ public class OkHttpClientUtils {
             }
             return null;
         } catch (NoRouteToHostException e) {
+            log.error("HTTP Request Failed. Please set up the proxy!", e);
             throw new OpenAINoRouteToHostException("HTTP Request Failed. Please set up the proxy!", e);
         } catch (IOException e) {
-            throw new OpenAIStreamEmptyException("HTTP Request Failed");
+            log.error("HTTP Request Failed!", e);
+            throw new OpenAIStreamEmptyException("HTTP Request Failed!", e);
         }
     }
 
