@@ -6,7 +6,7 @@ import icu.aicq.ai.open.ai.api.service.OpenAIService;
 
 /**
  * @author zhiqi
- * @date 2023-03-19
+ * @since 2023-03-19
  */
 public class OpenAIServiceImpl implements OpenAIService {
 

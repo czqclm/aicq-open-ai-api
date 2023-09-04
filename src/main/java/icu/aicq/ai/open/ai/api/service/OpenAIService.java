@@ -4,7 +4,7 @@ import icu.aicq.ai.open.ai.api.config.OpenAIConfigStorage;
 
 /**
  * @author zhiqi
- * @date 2023-03-19
+ * @since 2023-03-19
  */
 public interface OpenAIService {
 

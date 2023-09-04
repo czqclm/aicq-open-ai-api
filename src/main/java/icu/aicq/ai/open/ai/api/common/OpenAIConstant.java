@@ -4,7 +4,7 @@ package icu.aicq.ai.open.ai.api.common;
  * openAI 相关常量
  *
  * @author zhiqi
- * @date 2023-03-19
+ * @since 2023-03-19
  */
 public interface OpenAIConstant {
 

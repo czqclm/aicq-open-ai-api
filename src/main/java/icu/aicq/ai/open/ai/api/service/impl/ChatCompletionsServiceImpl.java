@@ -21,7 +21,7 @@ import java.util.function.BiFunction;
 
 /**
  * @author zhiqi
- * @date 2023-03-19
+ * @since 2023-03-19
  */
 @Slf4j
 public class ChatCompletionsServiceImpl extends OpenAIServiceImpl implements ChatCompletionsService {

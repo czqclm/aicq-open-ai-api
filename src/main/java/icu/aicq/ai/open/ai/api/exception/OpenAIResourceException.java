@@ -4,7 +4,7 @@ import okhttp3.Response;
 
 /**
  * @author zhiqi
- * @date 2023-04-11
+ * @since 2023-04-11
  */
 public class OpenAIResourceException extends AicqException {
 

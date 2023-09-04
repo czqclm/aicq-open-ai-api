@@ -36,7 +36,7 @@ import static icu.aicq.ai.open.ai.api.common.OpenAIConstant.STREAM_DATA_STARTS_S
 
 /**
  * @author zhiqi
- * @date 2023-03-19
+ * @since 2023-03-19
  */
 @Slf4j
 public class OkHttpClientUtils {

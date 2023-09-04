@@ -7,7 +7,7 @@ import icu.aicq.ai.open.ai.api.utils.OkHttpClientUtils;
  * openAI 配置
  *
  * @author zhiqi
- * @date 2023-03-19
+ * @since 2023-03-19
  */
 public interface OpenAIConfigStorage {
 

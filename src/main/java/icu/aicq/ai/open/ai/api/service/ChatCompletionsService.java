@@ -11,7 +11,7 @@ import java.util.function.BiFunction;
 
 /**
  * @author zhiqi
- * @date 2023-03-19
+ * @since 2023-03-19
  */
 public interface ChatCompletionsService {
 
@@ -35,7 +35,7 @@ public interface ChatCompletionsService {
      * 处理 stream 响应到 SSE 的响应
      *
      * @param request 请求
-     * @return Flux<String>
+     * @return Flux
      */
     default Flux<String> handleStream2SSEResponse(ChatCompletionRequest request) {
         return handleStream2SSEResponse(request, true, ((list, aicqException) -> {}));
@@ -48,7 +48,7 @@ public interface ChatCompletionsService {
      * @param pretreatmentDataToOnlyContent 是否预处理 openAI 响应的数据
      *                                      true 仅返回文本
      *                                      false 返回 openAI 原始
-     * @return Flux<String>
+     * @return Flux
      */
     default Flux<String> handleStream2SSEResponse(ChatCompletionRequest request, boolean pretreatmentDataToOnlyContent) {
         return handleStream2SSEResponse(request, pretreatmentDataToOnlyContent, ((list, aicqException) -> {}));
@@ -59,9 +59,9 @@ public interface ChatCompletionsService {
      *
      * @param request     请求
      * @param finalResult 最终组装好的结果
-     *                    每个 line 数据 CopyOnWriteArrayList<String>
+     *                    每个 line 数据 CopyOnWriteArrayList
      *                    响应中发生的异常 AicqHttpException
-     * @return Flux<String>
+     * @return Flux
      */
     default Flux<String> handleStream2SSEResponse(ChatCompletionRequest request, BiConsumer<CopyOnWriteArrayList<String>, AicqException> finalResult) {
         return handleStream2SSEResponse(request, true, finalResult);
@@ -72,12 +72,12 @@ public interface ChatCompletionsService {
      *
      * @param request                       请求
      * @param finalResult                   最终组装好的结果
-     *                                      每个 line 数据 CopyOnWriteArrayList<String>
+     *                                      每个 line 数据 CopyOnWriteArrayList
      *                                      响应中发生的异常 AicqHttpException
      * @param pretreatmentDataToOnlyContent 是否预处理 openAI 响应的数据
      *                                      true 仅返回文本
      *                                      false 返回 openAI 原始
-     * @return Flux<String>
+     * @return Flux
      */
     Flux<String> handleStream2SSEResponse(ChatCompletionRequest request, boolean pretreatmentDataToOnlyContent, BiConsumer<CopyOnWriteArrayList<String>, AicqException> finalResult);
 }

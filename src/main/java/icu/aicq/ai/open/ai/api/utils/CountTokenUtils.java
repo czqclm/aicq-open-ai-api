@@ -16,15 +16,15 @@ import java.util.Optional;
 /**
  * @author zhiqi
  * @version v1.0 结合 jtokkit 作者的回复, 修正计算结果 <a href="https://github.com/knuddelsgmbh/jtokkit/issues/5">Discrepancy in promptTokens count while using jtokkit with OpenAI's GPT-3 API</a>
- * @date 2023-04-10
+ * @since 2023-04-10
  */
 public class CountTokenUtils {
     private final static EncodingRegistry registry = Encodings.newDefaultEncodingRegistry();
 
     /**
      * 计算
-     * ChatCompletionRequest#messages + ChatCompletionResponse#choices#message <br/>
-     * 会根据请求的 model 切换计算方式, 默认为 gpt-3.5-turbo <br/>
+     * ChatCompletionRequest#messages + ChatCompletionResponse#choices#message
+     * 会根据请求的 model 切换计算方式, 默认为 gpt-3.5-turbo
      * 如果你当前的结果为 stream 建议使用 {@link ChatStreamResultResolver#convertStreamData2ChatCompletionResponse} 进行转换
      *
      * @param request  请求

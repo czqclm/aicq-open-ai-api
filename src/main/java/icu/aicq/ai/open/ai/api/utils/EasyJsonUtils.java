@@ -10,7 +10,7 @@ import java.util.Objects;
 
 /**
  * @author zhiqi
- * @date 2022-05-20
+ * @since 2022-05-20
  */
 public class EasyJsonUtils {
 

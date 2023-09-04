@@ -2,7 +2,7 @@ package icu.aicq.ai.open.ai.api.exception;
 
 /**
  * @author zhiqi
- * @date 2023-04-11
+ * @since 2023-04-11
  */
 public class OpenAINoRouteToHostException extends AicqException {
 

@@ -20,7 +20,7 @@ import java.util.Objects;
  * openAI stream 结果解析器
  *
  * @author zhiqi
- * @date 2023-03-28
+ * @since 2023-03-28
  */
 @Slf4j
 public class ChatStreamResultResolver {
