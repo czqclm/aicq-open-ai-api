@@ -3,10 +3,8 @@ package icu.aicq.ai.open.ai.api.config.impl;
 import icu.aicq.ai.open.ai.api.common.OpenAIConstant;
 import icu.aicq.ai.open.ai.api.config.OpenAIConfigStorage;
 import icu.aicq.ai.open.ai.api.redis.RedisOps;
-import icu.aicq.ai.open.ai.api.redis.RedissonRedisOps;
 import icu.aicq.ai.open.ai.api.utils.OkHttpClientUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.redisson.api.RedissonClient;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -48,16 +46,6 @@ public class OpenAIRedisConfigStorageImpl implements OpenAIConfigStorage, Serial
     public OpenAIRedisConfigStorageImpl(RedisOps redisOps, String keyPrefix) {
         this.redisOps = redisOps;
         this.keyPrefix = keyPrefix;
-    }
-
-    /**
-     * 构造函数
-     *
-     * @param redissonClient redisson 客户端
-     * @param keyPrefix      redis key 前缀
-     */
-    public OpenAIRedisConfigStorageImpl(RedissonClient redissonClient, String keyPrefix) {
-        this(new RedissonRedisOps(redissonClient), keyPrefix);
     }
 
     @Override
